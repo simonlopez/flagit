@@ -1,0 +1,27 @@
+{
+  "name"            : "FlagIt",
+  "description"     : "A simple server allowing to flag locations",
+  "version"         : "0.0.1",
+  "homepage"        : "http://flagit.slopez.org",
+  "author"          : "Simon Lopez",
+  "engines"         : {
+    "node"          : ">= 0.4.0"
+  },
+  "private"         : true,
+  "dependencies"    : {
+    "connect-mongodb" : "1.1.5",
+    "ejs"             : "0.8.3",
+    "ejs-locals"      : "1.0.2",
+    "express"         : "3.0.4",
+    "mongoose"        : "3.4.0",
+    "mailer"          : "0.6.7",
+    "request"         : "2.12.0"
+  },
+  "devDependencies" : {
+  },
+  "bin"             : {
+    "start"         : "server/app"
+  },
+  "scripts"         : {
+  }
+}
