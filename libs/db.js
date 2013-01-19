@@ -102,8 +102,8 @@ Model: Place
 Place = new Schema({
   user_id: {type: String, required: true },
   type: {type: String, required: true },
-  lon: {type:Number, required: true},
-  lat: {type:Number, required: true},
+  lon: {type:Number, required: false},
+  lat: {type:Number, required: false},
   name: {type:String, required: true},
   addr: {type:String, required: false},
   updated_at: { type: Date, required: true, default: Date.now}
@@ -113,6 +113,7 @@ Place.pre("save", function(next) {
     if(!this.addr) {
       next(new Error("Can't geocode undefined address!"));
     }
+    var self = this;
     request('http://open.mapquestapi.com/nominatim/v1/search?format=json&q='+encodeURI(this.addr),
             function (error, response, body) {
       if (!error && response.statusCode == 200) {
@@ -123,10 +124,10 @@ Place.pre("save", function(next) {
           return next(e);
         }
         if(!res || !res.length) {
-          error =  next(new Error("Can't geocode: "+this.addr));
+          error =  next(new Error("Can't geocode: "+self.addr));
         } else {
-          this.lat = res[0].lat;
-          this.lon = res[0].lon;
+          self.lat = res[0].lat;
+          self.lon = res[0].lon;
         }
       }
       next(error);
@@ -135,10 +136,6 @@ Place.pre("save", function(next) {
     next();
   }
 });
-
-mongoose.model("User", User);
-mongoose.model("LoginToken", LoginToken);
-mongoose.model("Place", Place);
 
 db = mongoose.connect(mongoPath, function(err) {
   if (err) {
@@ -151,5 +148,6 @@ module.exports = {
   User: mongoose.model("User", User),
   LoginToken: mongoose.model("LoginToken", LoginToken),
   Place: mongoose.model("Place", Place),
-  sessionStore: new MongoStore({db:conf.db})
+  db: mongoose.connection.db,
+  mongoPath: mongoPath
 }

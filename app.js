@@ -2,6 +2,9 @@ var express = require('express'),
     mailer = require('mailer'),
     path = require('path'),
     engine = require('ejs-locals'),
+    Session = require('connect-mongodb'),
+    connect = require('connect'),
+    MemStore = connect.session.MemoryStore,
     conf = require("./conf/"+(process.env.NODE_ENV ? process.env.NODE_ENV : 'dev')),
     db = require("./libs/db");
 
@@ -35,11 +38,11 @@ app.configure(function() {
   app.use(app.router);
   app.set('port', conf.server.port);
   app.set('host', conf.server.host);
-  app.use(express.logger({
+  /*app.use(express.logger({
     format: "\u001b[1m:method\u001b[0m \u001b[33m:         url\u001b[0m :response-time ms"
-  }));
+  }));*/
   app.use(express.session({
-    store: db.sessionStore,
+    store: new MemStore({reapInterval: 60000 * 10}),//new Session({db: db.db, reapInterval: 3000, maxAge: 300000}),
     secret: conf.secret
   }));
 });
@@ -103,8 +106,7 @@ app.get("/", loadUser, function(req, res, next) {
 });
 
 app.get("/places", loadUser, function(req, res, next) {
-  var user_id = (req.cookies ? req.cookies.user_id : undefined);
-  
+  var user_id = req.currentUser.id;
   db.Place.find({user_id: user_id}, function (err,places){
     if (err) {
       return res.send(500, 'Something broke!');
@@ -118,9 +120,10 @@ app.get("/places", loadUser, function(req, res, next) {
 });
 
 app.post("/places", loadUser, function(req, res, next) {
-  var user_id = (req.cookies ? req.cookies.user_id : undefined);
-  new Place({
+  var user_id = req.currentUser.id;
+  new db.Place({
     user_id: user_id,
+    name   : req.body.name,
     type   : req.body.type,
     addr   : req.body.addr,
     lat    : req.body.lat,
@@ -129,7 +132,8 @@ app.post("/places", loadUser, function(req, res, next) {
     if (err) {
       return next(err);
     }
-    res.send(200, filterPlace(place));
+    //res.send(200, filterPlace(place));
+    return res.redirect("/");
   });
 });
 
@@ -137,15 +141,17 @@ app.get("/users/new", function(req, res, next) {
   var cookie;
   if (req.cookies.logintoken) {
     cookie = JSON.parse(req.cookies.logintoken);
-    return LoginToken.findOne({
+    return db.LoginToken.findOne({
       email: cookie.email,
       series: cookie.series,
       token: cookie.token
     }, (function(err, token) {
       if (!token) {
-        return routes.user(req, res, next);
+        return res.render("create.ejs", {
+          title: conf.name
+        });
       }
-      return User.findOne({
+      return db.User.findOne({
         email: token.email
       }, function(err, user) {
         if (user) {
@@ -159,18 +165,23 @@ app.get("/users/new", function(req, res, next) {
             return res.redirect("/");
           });
         } else {
-          return routes.user(req, res, next);
+          return res.render("create.ejs", {
+            title: conf.name
+          });
         }
       });
     }));
   } else {
-    return routes.user(req, res, next);
+    res.render("create.ejs", {
+      title: conf.name
+    });
+    console.log('rendered');
   }
 });
 
 app.post("/users.:format?", function(req, res, next) {
   var user;
-  user = new User(req.body.user);
+  user = new db.User(req.body.user);
   return user.save(function(err) {
     if (err) {
       return res.redirect("/users/new");
@@ -189,15 +200,17 @@ app.get("/sessions/new", function(req, res, next) {
   var cookie;
   if (req.cookies.logintoken) {
     cookie = JSON.parse(req.cookies.logintoken);
-    return LoginToken.findOne({
+    return db.LoginToken.findOne({
       email: cookie.email,
       series: cookie.series,
       token: cookie.token
     }, (function(err, token) {
       if (!token) {
-        return routes.session(req, res, next);
+        return res.render("login.ejs", {
+          title: conf.name
+        });
       }
-      return User.findOne({
+      return db.User.findOne({
         email: token.email
       }, function(err, user) {
         if (user) {
@@ -211,23 +224,27 @@ app.get("/sessions/new", function(req, res, next) {
             return res.redirect("/");
           });
         } else {
-          return routes.session(req, res, next);
+          return res.render("login.ejs", {
+            title: conf.name
+          });
         }
       });
     }));
   } else {
-    return routes.session(req, res, next);
+    return res.render("login.ejs", {
+      title: conf.name
+    });
   }
 });
 
 app.post("/sessions", function(req, res, next) {
-  return User.findOne({
+  return db.User.findOne({
     email: req.body.user.email
   }, function(err, user) {
     var expire, loginToken;
     if (user && user.authenticate(req.body.user.password)) {
       expire = new Date(Date.now() + 2 * 604800000);
-      loginToken = new LoginToken();
+      loginToken = new db.LoginToken();
       loginToken.email = user.email;
       return loginToken.save(function() {
         res.cookie("logintoken", loginToken.cookieValue, {
@@ -244,7 +261,7 @@ app.post("/sessions", function(req, res, next) {
 });
 
 app.get("/sessions", loadUser, function(req, res, next) {
-  LoginToken.remove({
+  db.LoginToken.remove({
     email: req.cookie.email,
     series: req.cookie.series,
     token: req.cookie.token
@@ -254,9 +271,18 @@ app.get("/sessions", loadUser, function(req, res, next) {
 });
 
 app.del("/sessions", loadUser, function(req, res, next) {
-  LoginToken.remove({
+  db.LoginToken.remove({
     email: req.currentUser.email
   }, function() {});
   res.clearCookie("logintoken");
   return res.redirect("/sessions/new");
+});
+
+app.listen(conf.server.port, conf.server.host, function(err) {
+  if (err) {
+    console.error('failed to start server on %s:%s with error: %s', conf.server.host, conf.server.port, err);
+    process.exit(-1);
+  }
+  console.info('started server on %s:%s', conf.server.host, conf.server.port);
+  return console.info('environment: %s', app.settings.env);
 });

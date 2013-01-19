@@ -6,6 +6,263 @@ html, body {
 #map{
     margin:0;
     padding:0;
-    width:100%;
-    height:100%;
+    position:absolute;
+    left:0;
+    right:0;
+    top:80px;
+    bottom:48px;
+}
+#addPlace {
+    margin:0;
+    padding:0;
+    position:absolute;
+    left:10px;
+    top:10px;
+    font-size: 10px;
+}
+#addPlace div {
+    display: inline-block;
+}
+#addPlace input {
+    width: 100px;
+}
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+
+body {
+  line-height: 1;
+}
+
+ol, ul {
+  list-style: none;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+caption, th, td {
+  text-align: left;
+  font-weight: normal;
+  vertical-align: middle;
+}
+
+q, blockquote {
+  quotes: none;
+}
+q:before, q:after, blockquote:before, blockquote:after {
+  content: "";
+  content: none;
+}
+
+a img {
+  border: none;
+}
+
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary {
+  display: block;
+}
+
+body {
+  font: 14px "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+}
+
+#page-title {
+  color: #666666;
+  background-color: #f8f8f8;
+  font-size: 32px;
+  line-height: 1.35;
+  padding: 20px 0;
+  text-align: center;
+  text-shadow: 0 1px 1px white;
+}
+
+.del-btn, .del-btn-edit {
+  display: inline;
+  float: right;
+  background: url("/images/delete.png") no-repeat bottom left;
+  font: 0/0 serif;
+  text-shadow: none;
+  color: transparent;
+  width: 16px;
+  height: 18px;
+}
+
+.del-btn-edit {
+  width: 20px;
+  height: 21px;
+}
+
+#list {
+  width: 283px;
+  margin: 0 auto;
+  padding: 20px 0 15px;
+  position: relative;
+}
+
+.item, .item-new {
+  overflow: hidden;
+  *zoom: 1;
+  background-color: #f9f9f9;
+  border: 1px solid #eeeeee;
+  border-radius: 6px 6px 6px 6px;
+  list-style: none outside none;
+  margin: 6px 0 0;
+  padding: 8px 9px 9px;
+  position: relative;
+  text-shadow: 1px 1px 0 white;
+  width: 250px;
+}
+.item:hover, .item-new:hover {
+  border-color: #9be0f9;
+  box-shadow: 0 0 5px #a6d5fd;
+}
+
+.item-new {
+  padding: 4px 5px;
+  width: 258px;
+}
+
+.input, .update-input {
+  border: 1px solid #cccccc;
+  color: #666666;
+  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+  font-size: 15px;
+  padding: 3px 4px;
+  width: 248px;
+  height: 19px;
+}
+
+.update-input {
+  width: 220px;
+}
+
+.content {
+  color: #777777;
+  font-size: 1.2em;
+  text-shadow: 1px 1px 0 white;
+}
+
+.update-link {
+  display: inline;
+  float: left;
+  font-family: "Lucida Grande", "Lucida Sans Unicode", sans-serif;
+  color: #666666;
+  text-decoration: none;
+  overflow: hidden;
+  white-space: nowrap;
+  max-width: 15em;
+  text-overflow: ellipsis;
+}
+.update-link:hover {
+  color: #333333;
+}
+
+.update-form {
+  display: inline;
+  float: left;
+}
+
+#footer-wrap {
+  background-color: #f8f8f8;
+}
+
+#footer {
+  overflow: hidden;
+  *zoom: 1;
+  width: 210px;
+  margin: 0 auto;
+  position: relative;
+  top: 17px;
+}
+
+.footer-content {
+  display: inline;
+  float: left;
+  color: #333333;
+  font-family: Georgia;
+  padding: 0 4px;
+}
+
+#github-link {
+  color: #666666;
+  text-decoration: none;
+}
+#github-link:hover {
+  text-decoration: underline;
+}
+
+html, body {
+  height: 100%;
+}
+
+#layout {
+  clear: both;
+  min-height: 100%;
+  height: auto !important;
+  height: 100%;
+  margin-bottom: -48px;
+}
+#layout #layout-footer {
+  height: 48px;
+}
+
+#footer-wrap {
+  clear: both;
+  position: relative;
+  height: 48px;
+}
+
+#logout {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+#login {
+  width:400px;
+  margin-top:20px;
+  margin-bottom:20px;
+  margin-left:100px;
+}
+#login div {
+  margin-bottom:10px;
+  width:100%;
+}
+#login span {
+  display: inline-block;
+  width: 110px;
+  font-weight: bold;
+  font-size: 12px;
+}
+#login #button {
+  text-align:right;
+}
+#button input {
+  margin-right:28px;
+}
+
+a {
+  color:#a9a9a9;
+  font-weight: bold;
+  font-size: 10px;
 }

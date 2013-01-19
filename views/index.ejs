@@ -6,5 +6,27 @@
 </div>
 
 <div id="map"></div>
-
+  <div id="addPlace">
+  <form action="/places" method="post" accept-charset="utf-8">
+    <div id="name">
+      <span>Nom: </span>
+      <input class="input" type="text" name="name" />
+    </div>
+    <div id="adresse">
+      <span>Adresse: </span>
+      <input class="input" type="text" name="addr" />
+    </div>
+    <div id="type">
+      <span>Type: </span>
+      <select class="select"  name="type">
+        <option value="restaurant">Restaurant</option>
+        <option value="leisure-and-recreation">Loisir et dÃtente</option>
+        <option value="walks-and-visits">Balades et visites</option>
+      </select>
+    </div>
+    <div id="button">
+      <input type="submit" value="Ajouter">
+    </div>
+  </form>
+  </div>
 </div>

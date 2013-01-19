@@ -1,0 +1,21 @@
+<% layout('./layout.ejs') -%>
+<h1 id="page-title"><%= title %></h1>
+
+<div id="login">
+  <form action="/users" method="post" accept-charset="utf-8">
+    <div id="email">
+      <span>Email: </span>
+      <input class="input" type="text" name="user[email]" />
+    </div>
+    <div id="password">
+      <span>Password: </span>
+      <input class="input" type="password" name="user[password]" />
+    </div>
+    <div id="button">
+      <input type="submit" value="Create">
+    </div>
+  </form>
+  <div id="connect">
+    <a href="/sessions/new">Se connecter</a>
+  </div>
+</div>
